@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Events\DeleteMessageEvent;
+use App\Events\EditMessageEvent;
+use App\Events\SendMessageEvent;
 use App\Models\Chat;
 use App\Models\dto\ChatUserDTO;
 use App\Models\dto\LastMessageDTO;
@@ -287,6 +290,10 @@ class ChatService
                     }
                 }
                 DB::commit();
+
+                //!!!!!!!!!!!!
+                $this->sendMessageBroadcast($createdMessage->id, $request['chat_id'], 'send');
+
                 return true;
             } catch (\Throwable $e) {
                 DB::rollBack();
@@ -309,6 +316,9 @@ class ChatService
             Message::where('id', $request['message_id'])->update([
                 'text' => $request['text']
             ]);
+
+            $link = UserChatLink::where('id', $message->link_id)->first();
+            $this->sendMessageBroadcast($message->id, $link->chat_id, 'edit');
             return true;
         }
         return false;
@@ -326,6 +336,7 @@ class ChatService
                 $deleted = Message::where('id', $request['message_id'])->delete();
                 if ($deleted && $messageFiles) {
                     $this->deleteMessageFiles($messageFiles);
+                    event(new DeleteMessageEvent($request['message_id'], $link->chat_id));
                 }
                 return (bool)$deleted;
             } else return false;
@@ -511,5 +522,16 @@ class ChatService
     protected function deleteFile($name): void
     {
         Storage::delete('/private/files/messages/' . $name);
+    }
+
+    protected function sendMessageBroadcast($messageId, $chat_id, $type): void
+    {
+        $message = Message::where('id', $messageId)
+            ->with('files')->first();
+        if($message) {
+            if($type == 'send') {
+                event(new SendMessageEvent($message, $chat_id));
+            } else event(new EditMessageEvent($message, $chat_id));
+        }
     }
 }

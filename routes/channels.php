@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\UserChatLink;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -15,4 +17,14 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
+    if (!$user) {
+        return false;
+    }
+
+    return UserChatLink::where('chat_id', $chatId)
+        ->where('user_id', $user->id)
+        ->exists();
 });
