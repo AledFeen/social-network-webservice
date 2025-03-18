@@ -6,13 +6,16 @@ use App\Http\Requests\Chat\CreatePersonalChatRequest;
 use App\Http\Requests\Chat\DeleteMessageRequest;
 use App\Http\Requests\Chat\DeletePersonalChatRequest;
 use App\Http\Requests\Chat\GetChatUsersRequest;
+use App\Http\Requests\Chat\GetLastMessageRequest;
 use App\Http\Requests\Chat\GetMessageForAdminRequest;
 use App\Http\Requests\Chat\GetMessagesRequest;
 use App\Http\Requests\Chat\SendMessageRequest;
 use App\Http\Requests\Chat\UpdateMessageRequest;
+use App\Http\Requests\Chat\UpdateReadPropertiesRequest;
 use App\Http\Requests\Chat\UpdateReadPropertyRequest;
 use App\Http\Resources\ChatIdResource;
 use App\Http\Resources\ChatUsersResource;
+use App\Http\Resources\LastMessageDTO\LastMessageDTOResource;
 use App\Http\Resources\Messages\MessageResource;
 use App\Http\Resources\Messages\PaginatedMessagesResource;
 use App\Http\Resources\PreviewChatDTO\PreviewChatDTOResource;
@@ -102,6 +105,19 @@ class ChatController extends Controller
         return PreviewChatDTOResource::collection($result);
     }
 
+    public function getLastMessage(GetLastMessageRequest $request): PreviewChatDTOResource|JsonResponse
+    {
+        $request = $request->validated();
+
+        $result = $this->service->getLastMessageForChat($request);
+
+        if (!$result) {
+            return response()->json(['error' => 'Message not found'], 404);
+        }
+
+        return new PreviewChatDTOResource($result);
+    }
+
     public function getChatId(CreatePersonalChatRequest $request): ChatIdResource|JsonResponse
     {
         $request = $request->validated();
@@ -133,11 +149,20 @@ class ChatController extends Controller
         return response()->json(['success' => $result], $result ? 200 : 400);
     }
 
-    public function updateReadProperty(UpdateReadPropertyRequest $request): JsonResponse
+    public function updateReadProperties(UpdateReadPropertiesRequest $request): JsonResponse
     {
         $request = $request->validated();
 
         $result = $this->service->updateReadProperties($request);
+
+        return response()->json(['success' => $result], $result ? 200 : 400);
+    }
+
+    public function updateReadProperty(UpdateReadPropertyRequest $request): JsonResponse
+    {
+        $request = $request->validated();
+
+        $result = $this->service->updateReadProperty($request);
 
         return response()->json(['success' => $result], $result ? 200 : 400);
     }

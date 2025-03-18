@@ -4,7 +4,7 @@ namespace App\Http\Requests\Chat;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReadPropertyRequest extends FormRequest
+class GetLastMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdateReadPropertyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message_id' => 'required|integer'
+            'chat_id' => 'required|integer'
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Events\DeleteMessageEvent;
 use App\Events\EditMessageEvent;
+use App\Events\ReadAllMessageEvent;
+use App\Events\ReadMessageEvent;
 use App\Events\SendMessageEvent;
 use App\Models\Chat;
 use App\Models\dto\ChatUserDTO;
@@ -48,14 +50,38 @@ class ChatService
             ->get();
 
         if(count($messages) > 0) {
-            return (bool)Message::whereHas('link', function ($query) use ($chatId) {
+            $complete = (bool)Message::whereHas('link', function ($query) use ($chatId) {
                 $query->where('chat_id', $chatId)
                     ->where('user_id', '!=', Auth::id());
-            })
-                ->update(['is_read' => true]);
+            })->update(['is_read' => true]);
+
+            if($complete) {
+                $link = UserChatLink::where('chat_id', $chatId)->where('user_id', Auth::id())->first();
+                event(new ReadAllMessageEvent($link->id, $link->chat_id));
+                return true;
+            } else return false;
         } else {
             return true;
         }
+    }
+
+    public function updateReadProperty(array $request): bool {
+        $message = Message::where('id', $request['message_id'])->first();
+        if($message) {
+            $link1 = UserChatLink::where('id', $message->link_id)->first();
+            $userLink = UserChatLink::where('chat_id', $link1->chat_id)->where('user_id', Auth::id())->exists();
+            if($userLink) {
+                $isTrue = (bool) $message->update([
+                    'is_read' => true
+                ]);
+                if($isTrue) {
+                    event(new ReadMessageEvent($request['message_id'], $link1->chat_id));
+                }
+                return $isTrue;
+            }
+            return false;
+        }
+        return false;
     }
 
     public function getChatUsers(array $request)
@@ -129,6 +155,32 @@ class ChatService
         return $chatsDto->sortByDesc(fn($chat) => $chat->getLastMessage() ? Carbon::parse($chat->getLastMessage()->getCreatedAt())->timestamp : 0)->values();
     }
 
+    public function getLastMessageForChat(array $request): ?PreviewPersonalChatDTO
+    {
+        $userId = Auth::id();
+        $chatId = $request['chat_id'];
+        if(UserChatLink::where('chat_id', $chatId)->where('user_id',$userId)->exists()) {
+            $chat = Chat::whereHas('userChatLinks', function ($query) use ($chatId) {
+                $query->where('chat_id', $chatId);
+            })
+                ->with(['users' => function ($query) use ($userId) {
+                    $query->where('users.id', '!=', $userId)
+                        ->with('account');
+                }])
+                ->with('userChatLinks')
+                ->first();
+
+            return new PreviewPersonalChatDTO(
+                $chat->id,
+                $chat->type,
+                $this->getPersonalUserDto($chat),
+                $this->countNewMessages($chat),
+                $this->getLastMessageDTO($this->getLastMessage($chat))
+            );
+        }
+        return null;
+    }
+
     protected function getPersonalChatsDTOs($chats)
     {
         return $chats->map(function ($chat) {
@@ -143,6 +195,7 @@ class ChatService
             } else return null;
         });
     }
+
 
     protected function getPersonalUserDto($chat): UserDTO
     {

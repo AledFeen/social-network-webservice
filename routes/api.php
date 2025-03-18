@@ -127,7 +127,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'check_ban']], functi
     Route::post('/message', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
     Route::put('/message', [\App\Http\Controllers\ChatController::class, 'updateMessageText']);
     Route::delete('/message', [\App\Http\Controllers\ChatController::class, 'deleteMessage']);
-    Route::put('/messages-read', [\App\Http\Controllers\ChatController::class, 'updateReadProperty']);
+    Route::put('/messages-read', [\App\Http\Controllers\ChatController::class, 'updateReadProperties']);
+    Route::put('/message-read', [\App\Http\Controllers\ChatController::class, 'updateReadProperty']);
+    Route::get('/last-message', [\App\Http\Controllers\ChatController::class, 'getLastMessage']);
 
     Route::get('/message-image/{filename}', [\App\Http\Controllers\FileController::class, 'getMessageImage']);
     Route::get('/message-video/{filename}', [\App\Http\Controllers\FileController::class, 'getMessageVideo']);
