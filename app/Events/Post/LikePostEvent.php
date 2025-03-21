@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Post;
 
-use App\Models\Message;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Ramsey\Uuid\Type\Integer;
 
-class EditMessageEvent implements ShouldBroadcast
+class LikePostEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    private $message;
-    private $chatId;
+    protected $user;
+    protected $postId;
     /**
      * Create a new event instance.
      */
-    public function __construct(Message $message, $chatId)
+    public function __construct(int $user, $postId)
     {
-        $this->message = $message;
-        $this->chatId = $chatId;
+        $this->user = $user;
+        $this->postId = $postId;
     }
 
     /**
@@ -33,19 +31,19 @@ class EditMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.' . $this->chatId)
+            new PrivateChannel('post.' . $this->postId)
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'edited_message';
+        return 'like';
     }
 
     public function broadcastWith(): array
     {
         return [
-            'edited_message' => $this->message
+            'like' => $this->user
         ];
     }
 }

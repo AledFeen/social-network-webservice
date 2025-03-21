@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Post;
 
-use App\Models\Message;
-use Illuminate\Broadcasting\Channel;
+use App\Models\Comment;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ReadMessageEvent implements ShouldBroadcast
+class DeleteCommentEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    private $messageId;
-    private $chatId;
+    private $comment;
+    private $postId;
     /**
      * Create a new event instance.
      */
-    public function __construct($messageId, $chatId)
+    public function __construct($comment, $postId)
     {
-        $this->messageId = $messageId;
-        $this->chatId = $chatId;
+        $this->comment = $comment;
+        $this->postId = $postId;
     }
 
     /**
@@ -33,19 +31,19 @@ class ReadMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.' . $this->chatId)
+            new PrivateChannel('post.' . $this->postId)
         ];
     }
 
     public function broadcastAs(): string
     {
-        return 'read_message';
+        return 'deleted_comment';
     }
 
     public function broadcastWith(): array
     {
         return [
-            'read_message' => $this->messageId
+            'comment' => $this->comment
         ];
     }
 }

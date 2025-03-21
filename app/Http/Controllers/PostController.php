@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\Comment\AddCommentRequest;
 use App\Http\Requests\Post\Comment\DeleteCommentRequest;
+use App\Http\Requests\Post\Comment\GetCommentByIdRequest;
 use App\Http\Requests\Post\Comment\GetCommentForAdminRequest;
 use App\Http\Requests\Post\Comment\GetCommentRepliesRequest;
 use App\Http\Requests\Post\Comment\GetCommentRequest;
@@ -24,6 +25,7 @@ use App\Http\Requests\Post\UpdateLocationRequest;
 use App\Http\Requests\Post\UpdateTagsRequest;
 use App\Http\Requests\Post\UpdateTextRequest;
 use App\Http\Resources\CommentDTO\CommentDTOResource;
+use App\Http\Resources\CommentDTO\CommentWithReplyDTOResource;
 use App\Http\Resources\CommentDTO\PaginatedCommentDTOResource;
 use App\Http\Resources\LocationResource;
 use App\Http\Resources\PostDTO\PaginatedPostDTOResource;
@@ -194,6 +196,15 @@ class PostController extends Controller
         $result = $this->commentService->get($request);
 
         return new PaginatedCommentDTOResource($result);
+    }
+
+    public function getComment(GetCommentByIdRequest $request): CommentWithReplyDTOResource
+    {
+        $request = $request->validated();
+
+        $result = $this->commentService->getComment($request);
+
+        return new CommentWithReplyDTOResource($result);
     }
 
     public function getCommentReplies(GetCommentRepliesRequest $request): PaginatedCommentDTOResource

@@ -97,6 +97,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'check_ban']], functi
     Route::group(['middleware' => ['can_comment']], function () {
         Route::post('/comment', [\App\Http\Controllers\PostController::class, 'leaveComment']);
     });
+    Route::get('/comment', [\App\Http\Controllers\PostController::class, 'getComment']);
     Route::put('/comment', [\App\Http\Controllers\PostController::class, 'updateComment']);
     Route::delete('/comment', [\App\Http\Controllers\PostController::class, 'deleteComment']);
 

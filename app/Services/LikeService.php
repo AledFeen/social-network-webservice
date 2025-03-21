@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\Post\DislikePostEvent;
+use App\Events\Post\LikePostEvent;
 use App\Models\dto\UserDTO;
 use App\Models\PostLike;
 use App\Services\Blacklist\checkingBlacklist;
@@ -44,12 +46,17 @@ class LikeService implements MustCheckBlacklist
             ->where('post_id', $request['post_id'])
             ->first();
         if ($like) {
-            return (bool)$like->delete();
+            $dislike = (bool)$like->delete();
+            event(new DislikePostEvent(Auth::id(), $request['post_id']));
+            return $dislike;
         } else {
             $created = PostLike::create([
                 'user_id' => Auth::id(),
                 'post_id' => $request['post_id']
             ]);
+            if($created) {
+                event(new LikePostEvent(Auth::id(), $request['post_id']));
+            }
             return (bool)$created;
         }
     }

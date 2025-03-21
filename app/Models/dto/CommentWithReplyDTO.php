@@ -6,10 +6,11 @@ use App\Models\CommentFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class CommentDTO extends \App\Models\Comment
+class CommentWithReplyDTO extends \App\Models\Comment
 {
     protected int $id;
     protected int $postId;
+    protected ?int $replyId;
     protected UserDTO $user;
     protected string $text;
     protected Carbon $createdAt;
@@ -19,29 +20,27 @@ class CommentDTO extends \App\Models\Comment
 
     /**
      * @param int $id
-     * @param int $post_id
+     * @param int $postId
+     * @param int|null $replyId
      * @param UserDTO $user
      * @param string $text
-     * @param Carbon $created_at
-     * @param Carbon $updated_at
+     * @param Carbon $createdAt
+     * @param Carbon $updatedAt
      * @param int $hasReplies
      * @param Collection $files
      */
-    public function __construct(
-        int $id, int $post_id, UserDTO $user, string $text,
-        Carbon $created_at, Carbon $updated_at, int $hasReplies,
-        Collection $files)
+    public function __construct(int $id, int $postId, ?int $replyId, UserDTO $user, string $text, Carbon $createdAt, Carbon $updatedAt, int $hasReplies, Collection $files)
     {
         $this->id = $id;
-        $this->postId = $post_id;
+        $this->postId = $postId;
+        $this->replyId = $replyId;
         $this->user = $user;
         $this->text = $text;
-        $this->createdAt = $created_at;
-        $this->updatedAt = $updated_at;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
         $this->hasReplies = $hasReplies;
         $this->files = $files;
     }
-
 
     public function getId(): int
     {
@@ -76,6 +75,11 @@ class CommentDTO extends \App\Models\Comment
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    public function getReplyId(): ?int
+    {
+        return $this->replyId;
     }
 
     public function getFiles(): Collection

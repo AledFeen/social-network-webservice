@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Events\Post\DeleteCommentEvent;
+use App\Events\Post\EditCommentEvent;
+use App\Events\Post\SendCommentEvent;
 use App\Models\Comment;
 use App\Models\CommentFile;
 use App\Models\dto\CommentDTO;
+use App\Models\dto\CommentWithReplyDTO;
 use App\Models\dto\UserDTO;
 use App\Models\Post;
-use App\Models\PostFile;
 use App\Services\Blacklist\checkingBlacklist;
 use App\Services\Paginate\PaginatedResponse;
 use Illuminate\Support\Facades\Auth;
@@ -127,6 +130,7 @@ class CommentService
                     foreach ($files as $file) {
                         $images[] = $this->addImage($file, $createdComment->id);
                     }
+                    event(new SendCommentEvent($createdComment->id, $request['post_id']));
                     DB::commit();
                     return true;
                 }
@@ -142,12 +146,43 @@ class CommentService
         } else return false;
     }
 
+    public function getComment(array $request): CommentWithReplyDTO
+    {
+        $blockedByIds = $this->blockedBy();
+
+        $comment = Comment::where('id', $request['comment_id'])
+            ->with('files')
+            ->whereNotIn('user_id', $blockedByIds)
+            ->with('user.account')
+            ->withCount('replies')
+            ->first();
+
+        return new CommentWithReplyDTO(
+            $comment->id,
+            $comment->post_id,
+            $comment->reply_id,
+            new UserDTO(
+                $comment->user->id,
+                $comment->user->name,
+                $comment->user->account->image,
+            ),
+            $comment->text,
+            $comment->created_at,
+            $comment->updated_at,
+            $comment->replies_count,
+            $comment->files
+        );
+    }
+
     public function update(array $request) {
         $comment = Comment::where('id', $request['comment_id'])->first();
         if($comment->user_id == Auth::id()) {
             $updated = $comment->update([
                 'text' => $request['text']
             ]);
+            if($updated) {
+                event(new EditCommentEvent($updated, $comment->post_id));
+            }
             return (bool)$updated;
         }
         return false;
@@ -164,6 +199,7 @@ class CommentService
                     foreach ($files as $file) {
                         $this->deleteImage($file->filename);
                     }
+                    event(new DeleteCommentEvent(['id' => $request['comment_id'], 'reply' => $comment->reply_id], $post->id));
                     return true;
                 } else {
                     return false;

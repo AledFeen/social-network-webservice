@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Events\DeleteMessageEvent;
-use App\Events\EditMessageEvent;
-use App\Events\ReadAllMessageEvent;
-use App\Events\ReadMessageEvent;
-use App\Events\SendMessageEvent;
+use App\Events\Chat\DeleteMessageEvent;
+use App\Events\Chat\EditMessageEvent;
+use App\Events\Chat\ReadAllMessageEvent;
+use App\Events\Chat\ReadMessageEvent;
+use App\Events\Chat\SendMessageEvent;
 use App\Models\Chat;
 use App\Models\dto\ChatUserDTO;
 use App\Models\dto\LastMessageDTO;
@@ -14,7 +14,6 @@ use App\Models\dto\PreviewPersonalChatDTO;
 use App\Models\dto\UserDTO;
 use App\Models\Message;
 use App\Models\MessageFile;
-use App\Models\User;
 use App\Models\UserChatLink;
 use App\Services\Paginate\PaginatedResponse;
 use Illuminate\Support\Carbon;
@@ -587,4 +586,5 @@ class ChatService
             } else event(new EditMessageEvent($message, $chat_id));
         }
     }
+
 }
