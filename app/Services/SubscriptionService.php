@@ -79,6 +79,12 @@ class SubscriptionService implements MustCheckBlacklist
             ->where('follower_id', Auth::id())
             ->delete();
 
+        if(!$deleted) {
+            $deleted = SubscriptionRequest::where('user_id', $request['user_id'])
+                ->where('follower_id', Auth::id())
+                ->delete();
+        }
+
         return (bool)$deleted;
     }
 

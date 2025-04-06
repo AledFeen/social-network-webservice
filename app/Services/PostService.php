@@ -249,6 +249,9 @@ class PostService implements MustHaveLocation
         $blockedByIds = $this->blockedBy();
 
         $paginatedPosts = $posts->whereNotIn('user_id', $blockedByIds)
+            ->whereHas('user.privacy', function ($query) {
+            $query->where('account_type', 'public');
+        })
             ->withCount('reposts')
             ->withCount('likes')
             ->withCount('comments')

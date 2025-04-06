@@ -46,6 +46,21 @@ class UserTest extends TestCase
 
         $this->assertTrue($user->role == 'admin');
     }
+
+    public function test_logout(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'logout@test.com',
+            'password' => bcrypt('password123'),
+        ]);
+        $this->actingAs($user);
+
+        $response = $this->post('/logout');
+
+        $response->assertStatus(302);
+        $this->assertGuest();
+    }
+
     /*
     / it sends email confirm letter
     /
