@@ -26,7 +26,7 @@ class CreateComplaintRequest extends FormRequest
             'post_id' => 'nullable|integer',
             'comment_id' => 'nullable|integer',
             'message_id' => 'nullable|integer',
-            'text' => 'required|string'
+            'text' => 'required|string|min:10|max:255'
         ];
     }
 }

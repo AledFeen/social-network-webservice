@@ -27,8 +27,8 @@ class CreatePostRequest extends FormRequest
             'text' => 'nullable|string|max:512',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:32',
-            'files' => 'nullable|array',
-            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,mov,avi,mkv|max:25600',
+            'files' => 'nullable|array|max:4',
+            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,webm|max:25600',
         ];
     }
 }

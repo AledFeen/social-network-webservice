@@ -25,8 +25,8 @@ class AddCommentRequest extends FormRequest
             'post_id' => 'required|integer',
             'reply_id' => 'nullable|integer',
             'text' => 'required|string|max:255',
-            'files' => 'nullable|array',
-            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'files' => 'nullable|array|max:2',
+            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:15240',
         ];
     }
 }

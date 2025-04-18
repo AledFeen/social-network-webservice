@@ -180,9 +180,7 @@ class CommentService
             $updated = $comment->update([
                 'text' => $request['text']
             ]);
-            if($updated) {
-                event(new EditCommentEvent($updated, $comment->post_id));
-            }
+
             return (bool)$updated;
         }
         return false;

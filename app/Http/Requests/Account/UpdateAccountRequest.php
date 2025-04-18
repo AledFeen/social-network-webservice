@@ -22,10 +22,10 @@ class UpdateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'real_name' => 'nullable|string',
+            'real_name' => 'nullable|string|max:64',
             'location' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
-            'about_me' => 'nullable|string',
+            'about_me' => 'nullable|string|max:255',
         ];
     }
 }

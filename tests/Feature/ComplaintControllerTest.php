@@ -97,7 +97,7 @@ class ComplaintControllerTest extends TestCase
             'user_id' => $user1->id
         ]);
 
-        $response = $this->actingAs($user)->post('/api/complaint', ['post_id' => $post->id, 'text' => 'abrabra']);
+        $response = $this->actingAs($user)->post('/api/complaint', ['post_id' => $post->id, 'text' => 'abrabraabrabra']);
         $response->assertStatus(201);
     }
 

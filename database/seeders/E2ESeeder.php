@@ -250,7 +250,7 @@ class E2ESeeder extends Seeder
             'email' => 'feed@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -260,7 +260,7 @@ class E2ESeeder extends Seeder
             'email' => 'feed1@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -270,7 +270,7 @@ class E2ESeeder extends Seeder
             'email' => 'feed2@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -307,7 +307,7 @@ class E2ESeeder extends Seeder
             'email' => 'req@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -341,7 +341,7 @@ class E2ESeeder extends Seeder
             'email' => 'req2@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -377,7 +377,7 @@ class E2ESeeder extends Seeder
             'email' => 'reqpriv@gmail.com',
             'email_verified_at' => '30.03.2025',
             'password' => '12344321',
-            'role' => 1,
+            'role' => 0,
             'created_at' => '30.03.2025',
             'updated_at' => '30.03.2025'
         ]);
@@ -451,7 +451,106 @@ class E2ESeeder extends Seeder
             'updated_at' => now()
         ]);
 
+        $validateUser = User::factory()->create([
+            'name' => 'validateuser',
+            'email' => 'validate@gmail.com',
+            'email_verified_at' => '30.03.2025',
+            'password' => '12344321',
+            'role' => 0,
+            'created_at' => '30.03.2025',
+            'updated_at' => '30.03.2025'
+        ]);
 
+        $validateUser1 = User::factory()->create([
+            'name' => 'validateuser1',
+            'email' => 'validate1@gmail.com',
+            'email_verified_at' => '30.03.2025',
+            'password' => '12344321',
+            'role' => 0,
+            'created_at' => '30.03.2025',
+            'updated_at' => '30.03.2025'
+        ]);
+
+        $validateUser2 = User::factory()->create([
+            'name' => 'validateuser2',
+            'email' => 'validate2@gmail.com',
+            'email_verified_at' => '30.03.2025',
+            'password' => '12344321',
+            'role' => 0,
+            'created_at' => '30.03.2025',
+            'updated_at' => '30.03.2025'
+        ]);
+
+        $pp = Post::factory()->create([
+            'user_id' => $validateUser->id,
+            'text' =>  'post for validate testing',
+            'location' => $location2->name,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $pc = Post::factory()->create([
+            'user_id' => $validateUser->id,
+            'text' =>  'post for validate update comment testing',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $nt = Tag::factory()->create(
+            ['name' => 'new tag tag']);
+
+        PostTag::factory()->create([
+            'post_id'=>$pp->id,
+            'tag' =>$nt->name
+        ]);
+
+        Comment::factory()->create([
+            'post_id' => $pc->id,
+            'user_id' => $user1->id,
+            'text' => 'update',
+        ]);
+
+        $chatv = Chat::factory()->create([
+            'type' => 'personal'
+        ]);
+
+        $linkv = UserChatLink::factory()->create([
+            'chat_id' => $chatv->id,
+            'user_id' => $validateUser->id
+        ]);
+
+        UserChatLink::factory()->create([
+            'chat_id' => $chatv->id,
+            'user_id' => $validateUser1->id
+        ]);
+
+        Message::factory()->create([
+            'link_id' => $linkv->id,
+            'text' => 'first message',
+            'created_at' => now()->subMinutes(10),
+            'updated_at' => now()->subMinutes(5),
+        ]);
+
+        $chatv1 = Chat::factory()->create([
+            'type' => 'personal'
+        ]);
+
+        $linkv1 = UserChatLink::factory()->create([
+            'chat_id' => $chatv1->id,
+            'user_id' => $validateUser->id
+        ]);
+
+        UserChatLink::factory()->create([
+            'chat_id' => $chatv1->id,
+            'user_id' => $validateUser2->id
+        ]);
+
+        Message::factory()->create([
+            'link_id' => $linkv1->id,
+            'text' => 'first message',
+            'created_at' => now()->subMinutes(10),
+            'updated_at' => now()->subMinutes(5),
+        ]);
 
     }
 }

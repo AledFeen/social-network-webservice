@@ -24,7 +24,7 @@ class UpdateFilesRequest extends FormRequest
         return [
             'post_id' => 'required|integer',
             'files' => 'nullable|array',
-            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,mov,avi,mkv|max:10240',
+            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,webm|max:15240',
         ];
     }
 }
