@@ -20,13 +20,13 @@ class FileController extends Controller implements MustCheckPostFileAccess
         return response()->file($path);
     }
 
-    public function getAccountImage($filename)
+    public function getAccountImage($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         $path = storage_path('/app/private/images/accounts/' . $filename);
         return $this->getFile($path);
     }
 
-    public function getPostImage($filename)
+    public function getPostImage($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessPostFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/images/posts/' . $filename);
@@ -36,7 +36,7 @@ class FileController extends Controller implements MustCheckPostFileAccess
         }
     }
 
-    public function getPostVideo($filename)
+    public function getPostVideo($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessPostFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/videos/posts/' . $filename);
@@ -46,14 +46,14 @@ class FileController extends Controller implements MustCheckPostFileAccess
         }
     }
 
-    public function getCommentImage($filename)
+    public function getCommentImage($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         $path = storage_path('/app/private/images/comments/' . $filename);
         return $this->getFile($path);
     }
 
 
-    public function getMessageImage($filename)
+    public function getMessageImage($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessMessageFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/images/messages/' . $filename);
@@ -64,7 +64,7 @@ class FileController extends Controller implements MustCheckPostFileAccess
 
     }
 
-    public function getMessageVideo($filename)
+    public function getMessageVideo($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessMessageFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/videos/messages/' . $filename);
@@ -75,7 +75,7 @@ class FileController extends Controller implements MustCheckPostFileAccess
 
     }
 
-    public function getMessageAudio($filename)
+    public function getMessageAudio($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessMessageFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/audios/messages/' . $filename);
@@ -86,7 +86,7 @@ class FileController extends Controller implements MustCheckPostFileAccess
 
     }
 
-    public function getMessageFile($filename)
+    public function getMessageFile($filename): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
     {
         if ($this->checkAccessMessageFile($filename) || Auth::user()->role == 'admin') {
             $path = storage_path('/app/private/files/messages/' . $filename);

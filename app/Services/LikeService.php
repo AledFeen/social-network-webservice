@@ -15,7 +15,7 @@ class LikeService implements MustCheckBlacklist
 {
     use checkingBlacklist;
 
-    public function get(array $request)
+    public function get(array $request): PaginatedResponse
     {
         $likes = PostLike::where('post_id', $request['post_id'])
             ->whereNotIn('user_id', $this->blockedBy())

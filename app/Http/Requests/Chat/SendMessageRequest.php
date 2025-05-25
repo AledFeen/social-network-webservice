@@ -25,7 +25,7 @@ class SendMessageRequest extends FormRequest
             'chat_id' => 'required|integer',
             'text' => 'nullable|string|max:1024',
             'files' => 'nullable|array',
-            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,mp3,wav,ogg,pdf,txt,xml,json,zip,rar|max:20240',
+            'files.*' => 'file|mimes:jpeg,png,jpg,gif,svg,mp4,webm,mp3,wav,ogg,pdf,txt,xml,json,zip|max:20240',
         ];
     }
 }

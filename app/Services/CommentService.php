@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Events\Post\DeleteCommentEvent;
-use App\Events\Post\EditCommentEvent;
 use App\Events\Post\SendCommentEvent;
 use App\Models\Comment;
 use App\Models\CommentFile;
@@ -174,7 +173,8 @@ class CommentService
         );
     }
 
-    public function update(array $request) {
+    public function update(array $request): bool
+    {
         $comment = Comment::where('id', $request['comment_id'])->first();
         if($comment->user_id == Auth::id()) {
             $updated = $comment->update([

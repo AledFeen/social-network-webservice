@@ -23,7 +23,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ChatService
 {
-    public function getChatId(array $request) {
+    public function getChatId(array $request)
+    {
         $userId = $request['user_id'];
 
         return Chat::whereIn('id', function ($query) {
@@ -64,7 +65,8 @@ class ChatService
         }
     }
 
-    public function updateReadProperty(array $request): bool {
+    public function updateReadProperty(array $request): bool
+    {
         $message = Message::where('id', $request['message_id'])->first();
         if($message) {
             $link1 = UserChatLink::where('id', $message->link_id)->first();
@@ -327,7 +329,7 @@ class ChatService
                                 $images[] = $this->addImage($file, $createdMessage->id);
                                 break;
 
-                            case in_array($extension, ['mp4', 'mov', 'avi', 'mkv']):
+                            case in_array($extension, ['mp4', 'webm']):
                                 $videos[] = $this->addVideo($file, $createdMessage->id);
                                 break;
 
@@ -342,10 +344,7 @@ class ChatService
                     }
                 }
                 DB::commit();
-
-                //!!!!!!!!!!!!
                 $this->sendMessageBroadcast($createdMessage->id, $request['chat_id'], 'send');
-
                 return true;
             } catch (\Throwable $e) {
                 DB::rollBack();

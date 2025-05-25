@@ -25,7 +25,7 @@ class PostLikeObserver
         return Post::where('id', $postLike->post_id)->first();
     }
 
-    protected function createNotification(Post $post, PostLike $postLike)
+    protected function createNotification(Post $post, PostLike $postLike): void
     {
         if ($post->user_id != $postLike->user_id) {
             NotificationLike::create([
@@ -35,7 +35,7 @@ class PostLikeObserver
         }
     }
 
-    protected function addPreferredTags(Post $post, PostLike $postLike)
+    protected function addPreferredTags(Post $post, PostLike $postLike): void
     {
         $tags = PostTag::where('post_id', $post->id)->get();
         foreach ($tags as $tag) {
