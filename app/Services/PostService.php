@@ -365,7 +365,7 @@ class PostService implements MustHaveLocation
         return false;
     }
 
-    public function updateLocation(array $request)
+    public function updateLocation(array $request): bool
     {
         $post = Post::where('id', $request['post_id'])->first();
         if ($post->user_id == Auth::id()) {
@@ -581,7 +581,7 @@ class PostService implements MustHaveLocation
         }
     }
 
-    protected function checkTagExistence(array $tags)
+    protected function checkTagExistence(array $tags): void
     {
         if ($tags) {
             foreach ($tags as $tag) {
@@ -615,7 +615,7 @@ class PostService implements MustHaveLocation
         }
     }
 
-    protected function deleteFiles(\Illuminate\Database\Eloquent\Collection $files)
+    protected function deleteFiles(\Illuminate\Database\Eloquent\Collection $files): void
     {
         foreach ($files as $file) {
             if ($file->type == 'image') {

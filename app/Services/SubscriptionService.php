@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Auth;
 class SubscriptionService implements MustCheckBlacklist
 {
     use checkingBlacklist;
-    public function checkRelations(array $request) {
+    public function checkRelations(array $request): object
+    {
         $subscription = Subscription::where(['user_id' => $request['user_id'], 'follower_id' => Auth::id()])
             ->first();
 
@@ -39,7 +40,7 @@ class SubscriptionService implements MustCheckBlacklist
         ];
     }
 
-    public function subscribe(array $request)
+    public function subscribe(array $request): bool
     {
         $user_id = $request['user_id'];
         $follower_id = Auth::id();
@@ -73,7 +74,7 @@ class SubscriptionService implements MustCheckBlacklist
         return false;
     }
 
-    public function unsubscribe(array $request)
+    public function unsubscribe(array $request): bool
     {
         $deleted = Subscription::where('user_id', $request['user_id'])
             ->where('follower_id', Auth::id())
@@ -88,7 +89,7 @@ class SubscriptionService implements MustCheckBlacklist
         return (bool)$deleted;
     }
 
-    public function deleteSubscriber(array $request)
+    public function deleteSubscriber(array $request): bool
     {
         $deleted = Subscription::where('user_id', Auth::id())
             ->where('follower_id', $request['user_id'])

@@ -54,7 +54,8 @@ class PreferredTagService
         } else return false;
     }
 
-    protected function checkTagExistence(string $tag) {
+    protected function checkTagExistence(string $tag): bool
+    {
         return (bool) Tag::where('name', $tag)->exists();
     }
 }

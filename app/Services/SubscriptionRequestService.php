@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class SubscriptionRequestService
 {
-    public function subscribe(array $request)
+    public function subscribe(array $request): bool
     {
         $user_id = $request['user_id'];
         $follower_id = Auth::id();
