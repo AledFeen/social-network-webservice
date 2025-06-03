@@ -35,3 +35,7 @@ Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordControll
 Route::get('/home', function () {
     return response()->json(['message' => 'home']);
 });
+
+//Route::get('/{any}', function () {
+//    return view('index');
+//})->where('any', '.*');
