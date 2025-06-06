@@ -13,7 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            E2ESeeder::class,
+            //E2ESeeder::class,
+            RandomDataSeeder::class
         ]);
     }
 }
