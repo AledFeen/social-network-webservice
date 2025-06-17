@@ -13,12 +13,13 @@ class ReadAllMessageEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     private $linkId;
     private $chatId;
+
     /**
      * Create a new event instance.
      */
-    public function __construct($messageId, $chatId)
+    public function __construct($linkId, $chatId)
     {
-        $this->linkId = $messageId;
+        $this->linkId = $linkId;
         $this->chatId = $chatId;
     }
 

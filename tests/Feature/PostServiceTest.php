@@ -327,6 +327,11 @@ class PostServiceTest extends TestCase
         $tag2 = Tag::factory()->create();
         $location = Location::factory()->create();
 
+        PreferredTag::factory()->create([
+           'user_id' => $user->id,
+            'tag' => $tag1->name
+        ]);
+
         Subscription::factory()->create([
             'user_id' => $user2->id,
             'follower_id' => $user->id
@@ -366,11 +371,6 @@ class PostServiceTest extends TestCase
         ]);
 
         PostLike::create([
-            'user_id' => $user->id,
-            'post_id' => $post->id
-        ]);
-
-        PostLike::create([
             'user_id' => $user2->id,
             'post_id' => $repost->id
         ]);
@@ -393,7 +393,7 @@ class PostServiceTest extends TestCase
                 'created_at' => $post->created_at,
                 'updated_at' => $post->updated_at,
                 'repost_count' => 1,
-                'like_count' => 1,
+                'like_count' => 0,
                 'comment_count' => 1,
                 'tags' => [
                     ['name' => $tag1->name],

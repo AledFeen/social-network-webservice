@@ -18,6 +18,7 @@ use App\Http\Resources\ChatUsersResource;
 use App\Http\Resources\LastMessageDTO\LastMessageDTOResource;
 use App\Http\Resources\Messages\MessageResource;
 use App\Http\Resources\Messages\PaginatedMessagesResource;
+use App\Http\Resources\Messages\UnreadMessagesCountResource;
 use App\Http\Resources\PreviewChatDTO\PreviewChatDTOResource;
 use App\Models\dto\ChatUserDTO;
 use App\Services\ChatService;
@@ -30,6 +31,11 @@ class ChatController extends Controller
     public function __construct(ChatService $service)
     {
         $this->service = $service;
+    }
+
+    public function getUnreadMessagesCount()
+    {
+        return new UnreadMessagesCountResource($this->service->getUnreadMessages());
     }
 
     public function getMessages(GetMessagesRequest $request): JsonResponse|PaginatedMessagesResource
