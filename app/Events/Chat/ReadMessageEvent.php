@@ -13,13 +13,15 @@ class ReadMessageEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     private $messageId;
     private $chatId;
+    private $userId;
     /**
      * Create a new event instance.
      */
-    public function __construct($messageId, $chatId)
+    public function __construct($messageId, $chatId, $userId)
     {
         $this->messageId = $messageId;
         $this->chatId = $chatId;
+        $this->userId = $userId;
     }
 
     /**
@@ -42,7 +44,7 @@ class ReadMessageEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'read_message' => $this->messageId
+            'data' => ['read_message' => $this->messageId, 'user_id' => $this->userId]
         ];
     }
 }

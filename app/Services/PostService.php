@@ -118,6 +118,7 @@ class PostService implements MustHaveLocation
         $likedTags = PreferredTag::where('user_id', Auth::id())->pluck('tag');
         $followedUserIds = Subscription::where('follower_id', Auth::id())->pluck('user_id');
         $likedPosts = PostLike::whereIn('user_id', $followedUserIds)->pluck('post_id');
+        $likedMyselfPosts = PostLike::where('user_id', Auth::id())->pluck('post_id');
 
         $blockedByIds = $this->blockedBy();
         $blockedByIds[] = Auth::id();
@@ -129,6 +130,7 @@ class PostService implements MustHaveLocation
                 ->orWhereIn('id', $likedPosts);
         })
             ->whereNotIn('user_id', $blockedByIds)
+            ->whereNotIn('id', $likedMyselfPosts)
             ->whereHas('user.privacy', function ($query) {
                 $query->where('account_type', 'public');
             })

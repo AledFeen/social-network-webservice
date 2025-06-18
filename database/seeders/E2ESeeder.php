@@ -19,8 +19,6 @@ use App\Models\SubscriptionRequest;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\UserChatLink;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class E2ESeeder extends Seeder

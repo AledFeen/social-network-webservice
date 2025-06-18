@@ -13,13 +13,15 @@ class DeleteMessageEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     private $messageId;
     private $chatId;
+    private $userId;
     /**
      * Create a new event instance.
      */
-    public function __construct($messageId, $chatId)
+    public function __construct($messageId, $chatId, $userId)
     {
         $this->messageId = $messageId;
         $this->chatId = $chatId;
+        $this->userId = $userId;
     }
 
     /**
@@ -42,7 +44,7 @@ class DeleteMessageEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'deleted_message' => $this->messageId
+            'data' => ['deleted_message' => $this->messageId, 'user_id' => $this->userId]
         ];
     }
 }

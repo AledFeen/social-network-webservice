@@ -14,13 +14,15 @@ class SendMessageEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     private $message;
     private $chatId;
+    private $userId;
     /**
      * Create a new event instance.
      */
-    public function __construct(Message $message, $chatId)
+    public function __construct(Message $message, $chatId, $userId)
     {
         $this->message = $message;
         $this->chatId = $chatId;
+        $this->userId = $userId;
     }
 
     /**
@@ -43,7 +45,7 @@ class SendMessageEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'message' => $this->message
+            'data' => ['message' => $this->message, 'user_id' => $this->userId]
         ];
     }
 }

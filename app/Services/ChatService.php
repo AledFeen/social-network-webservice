@@ -11,6 +11,7 @@ use App\Models\Chat;
 use App\Models\dto\ChatUserDTO;
 use App\Models\dto\LastMessageDTO;
 use App\Models\dto\PreviewPersonalChatDTO;
+use App\Models\dto\UnreadMessagesDTO;
 use App\Models\dto\UserDTO;
 use App\Models\Message;
 use App\Models\MessageFile;
@@ -49,7 +50,9 @@ class ChatService
         })
             ->get();
 
-        if(count($messages) > 0) {
+        $countMessages = count($messages);
+
+        if($countMessages > 0) {
             $complete = (bool)Message::whereHas('link', function ($query) use ($chatId) {
                 $query->where('chat_id', $chatId)
                     ->where('user_id', '!=', Auth::id());
@@ -57,7 +60,7 @@ class ChatService
 
             if($complete) {
                 $link = UserChatLink::where('chat_id', $chatId)->where('user_id', Auth::id())->first();
-                event(new ReadAllMessageEvent($link->id, $link->chat_id));
+                event(new ReadAllMessageEvent($link->id, $link->chat_id, Auth::id(), $countMessages));
                 return true;
             } else return false;
         } else {
@@ -76,7 +79,7 @@ class ChatService
                     'is_read' => true
                 ]);
                 if($isTrue) {
-                    event(new ReadMessageEvent($request['message_id'], $link1->chat_id));
+                    event(new ReadMessageEvent($request['message_id'], $link1->chat_id, Auth::id()));
                 }
                 return $isTrue;
             }
@@ -154,6 +157,33 @@ class ChatService
         $chatsDto = $this->getPersonalChatsDTOs($chats);
 
         return $chatsDto->sortByDesc(fn($chat) => $chat->getLastMessage() ? Carbon::parse($chat->getLastMessage()->getCreatedAt())->timestamp : 0)->values();
+    }
+
+    public function getUnreadMessages(): UnreadMessagesDTO
+    {
+        $userId = Auth::id();
+
+        $chatIds = Chat::whereHas('userChatLinks', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->pluck('id');
+
+        $chats = Chat::whereHas('userChatLinks', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+            ->with(['users' => function ($query) use ($userId) {
+                $query->where('users.id', '!=', $userId)
+                    ->with('account');
+            }])
+            ->with('userChatLinks')
+            ->get();
+
+        $countMessages = 0;
+
+        foreach ($chats as $chat) {
+            $countMessages += $this->countNewMessages($chat);
+        }
+
+        return new UnreadMessagesDTO($chatIds, $countMessages);
     }
 
     public function getLastMessageForChat(array $request): ?PreviewPersonalChatDTO
@@ -274,7 +304,6 @@ class ChatService
 
     protected function countNewMessages($chat)
     {
-
         if (!$chat || !$chat->userChatLinks) {
             return 0;
         }
@@ -387,7 +416,7 @@ class ChatService
                 $deleted = Message::where('id', $request['message_id'])->delete();
                 if ($deleted && $messageFiles) {
                     $this->deleteMessageFiles($messageFiles);
-                    event(new DeleteMessageEvent($request['message_id'], $link->chat_id));
+                    event(new DeleteMessageEvent($request['message_id'], $link->chat_id, Auth::id()));
                 }
                 return (bool)$deleted;
             } else return false;
@@ -581,7 +610,7 @@ class ChatService
             ->with('files')->first();
         if($message) {
             if($type == 'send') {
-                event(new SendMessageEvent($message, $chat_id));
+                event(new SendMessageEvent($message, $chat_id, Auth::id()));
             } else event(new EditMessageEvent($message, $chat_id));
         }
     }

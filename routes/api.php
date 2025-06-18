@@ -17,6 +17,8 @@ Route::get('/checkAuth', [\App\Http\Controllers\Auth\AuthController::class, 'che
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', [\App\Http\Controllers\Auth\AuthController::class, 'user']);
+    Route::get('/checkVerify', [\App\Http\Controllers\Auth\AuthController::class, 'checkVerified']);
+    Route::get('/checkBanned', [\App\Http\Controllers\Auth\AuthController::class, 'checkBanned']);
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'verified', 'check_ban']], function () {
@@ -131,6 +133,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified', 'check_ban']], functi
     Route::put('/messages-read', [\App\Http\Controllers\ChatController::class, 'updateReadProperties']);
     Route::put('/message-read', [\App\Http\Controllers\ChatController::class, 'updateReadProperty']);
     Route::get('/last-message', [\App\Http\Controllers\ChatController::class, 'getLastMessage']);
+    Route::get('unread-messages', [\App\Http\Controllers\ChatController::class, 'getUnreadMessagesCount']);
 
     Route::get('/message-image/{filename}', [\App\Http\Controllers\FileController::class, 'getMessageImage']);
     Route::get('/message-video/{filename}', [\App\Http\Controllers\FileController::class, 'getMessageVideo']);
