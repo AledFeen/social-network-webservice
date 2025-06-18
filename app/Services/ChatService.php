@@ -50,7 +50,9 @@ class ChatService
         })
             ->get();
 
-        if(count($messages) > 0) {
+        $countMessages = count($messages);
+
+        if($countMessages > 0) {
             $complete = (bool)Message::whereHas('link', function ($query) use ($chatId) {
                 $query->where('chat_id', $chatId)
                     ->where('user_id', '!=', Auth::id());
@@ -58,7 +60,7 @@ class ChatService
 
             if($complete) {
                 $link = UserChatLink::where('chat_id', $chatId)->where('user_id', Auth::id())->first();
-                event(new ReadAllMessageEvent($link->id, $link->chat_id));
+                event(new ReadAllMessageEvent($link->id, $link->chat_id, Auth::id(), $countMessages));
                 return true;
             } else return false;
         } else {
@@ -77,7 +79,7 @@ class ChatService
                     'is_read' => true
                 ]);
                 if($isTrue) {
-                    event(new ReadMessageEvent($request['message_id'], $link1->chat_id));
+                    event(new ReadMessageEvent($request['message_id'], $link1->chat_id, Auth::id()));
                 }
                 return $isTrue;
             }

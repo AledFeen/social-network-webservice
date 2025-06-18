@@ -33,7 +33,7 @@ class ChatController extends Controller
         $this->service = $service;
     }
 
-    public function getUnreadMessagesCount()
+    public function getUnreadMessagesCount(): UnreadMessagesCountResource
     {
         return new UnreadMessagesCountResource($this->service->getUnreadMessages());
     }
