@@ -68,22 +68,26 @@ class RandomDataSeeder extends Seeder
 
     private function createSubscribes(int $maxCountSubscribes): void
     {
+        $totalUsers = count($this->users);
+
         foreach ($this->users as $user) {
-            $countSubscribes = rand(0, $maxCountSubscribes);
+            $countSubscribes = rand(0, min($maxCountSubscribes, $totalUsers - 1));
+            $usedNumbers = [];
 
             for ($i = 0; $i < $countSubscribes; $i++) {
-                $usedNumbers = [];
-
-                $number = rand(0, $maxCountSubscribes - 1);
+                $number = rand(0, $totalUsers - 1);
 
                 while ($this->users[$number]->id === $user->id || in_array($number, $usedNumbers)) {
-                    $number = rand(0, $maxCountSubscribes - 1);
+                    $number = rand(0, $totalUsers - 1);
                 }
 
                 Subscription::factory()->create([
                     'user_id' => $user->id,
                     'follower_id' => $this->users[$number]->id
                 ]);
+
+                $usedNumbers[] = $number;
+
             }
         }
     }
@@ -227,8 +231,8 @@ class RandomDataSeeder extends Seeder
 
     private function createMessages(array $pair, int $maxCount): void
     {
-        for ($i = 0; $i < rand(2, $maxCount); $i++ ) {
-            $user = rand(0,1);
+        for ($i = 0; $i < rand(2, $maxCount); $i++) {
+            $user = rand(0, 1);
             Message::factory()->create([
                 'link_id' => $pair[$user]->id,
             ]);
