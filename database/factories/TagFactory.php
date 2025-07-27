@@ -16,8 +16,11 @@ class TagFactory extends Factory
      */
     public function definition(): array
     {
+        do {
+            $tag = fake()->unique()->word();
+        } while (strlen($tag) > 32);
         return [
-            'name' => fake()->unique()->text(32),
+            'name' => $tag,
         ];
     }
 }

@@ -36,6 +36,6 @@ Route::get('/home', function () {
     return response()->json(['message' => 'home']);
 });
 
-//Route::get('/{any}', function () {
+// Route::get('/{any}', function () {
 //    return view('index');
-//})->where('any', '.*');
+// })->where('any', '.*');

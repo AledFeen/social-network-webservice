@@ -131,6 +131,7 @@ class PostService implements MustHaveLocation
         })
             ->whereNotIn('user_id', $blockedByIds)
             ->whereNotIn('id', $likedMyselfPosts)
+            ->whereNotIn('user_id', $followedUserIds)
             ->whereHas('user.privacy', function ($query) {
                 $query->where('account_type', 'public');
             })

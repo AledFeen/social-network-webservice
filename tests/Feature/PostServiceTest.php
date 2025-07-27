@@ -24,7 +24,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
-use function MongoDB\BSON\toJSON;
+
 
 class PostServiceTest extends TestCase
 {
@@ -323,6 +323,7 @@ class PostServiceTest extends TestCase
         $user = User::factory()->create();
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
         $tag1 = Tag::factory()->create();
         $tag2 = Tag::factory()->create();
         $location = Location::factory()->create();
@@ -351,7 +352,7 @@ class PostServiceTest extends TestCase
 
         $repost = Post::factory()
             ->create([
-                'user_id' => $user2->id,
+                'user_id' => $user3->id,
                 'location' => $location->name,
                 'repost_id' => $post->id
             ]);
@@ -381,7 +382,7 @@ class PostServiceTest extends TestCase
         ]);
 
         $account1 = Account::where('user_id', $user1->id)->first();
-        $account2 = Account::where('user_id', $user2->id)->first();
+        $account2 = Account::where('user_id', $user3->id)->first();
 
         $expectedData = [
             [
@@ -411,7 +412,7 @@ class PostServiceTest extends TestCase
             ],
             [
                 'id' => $repost->id,
-                'user' => ['id' => $user2->id, 'name' => $user2->name, 'image' => $account2->image],
+                'user' => ['id' => $user3->id, 'name' => $user3->name, 'image' => $account2->image],
                 'repost_id' => $post->id,
                 'location' => $location->name,
                 'text' => $repost->text,
